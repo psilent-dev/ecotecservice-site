@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { containerVariants, itemVariants, useMotionReady } from "@/lib/motion";
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=1000&auto=format&fit=crop";
+  "gallery/hero.jpg";
 
 const SERVICE_CHIPS = [
   { label: "ТО", service: "Техническое обслуживание (ТО)" },
@@ -48,7 +48,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
   const motionReady = useMotionReady();
 
   return (
-    <section className="relative isolate pt-28 pb-12 sm:pt-36 lg:pt-40">
+    <section className="relative isolate overflow-x-clip pt-28 pb-12 sm:pt-36 lg:pt-40">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 bg-grid [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]"
@@ -67,7 +67,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
       />
 
       <motion.div
-        className="relative z-10 mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6"
+        className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 sm:px-6"
         variants={containerVariants}
         initial="hidden"
         animate={motionReady ? "visible" : "hidden"}
@@ -85,7 +85,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
               className="font-heading text-2xl font-bold leading-snug text-white sm:text-4xl lg:text-5xl"
             >
               Автосервис{" "}
-              <span className="inline-block">в Ростове-на-Дону</span> —{" "}
+              <span className="max-w-full">в Ростове-на-Дону</span> —{" "}
               <span className={accentClassName}>ремонт любой сложности</span>
             </motion.h1>
 
@@ -98,14 +98,13 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
             </motion.p>
 
             <motion.ul
-              className="no-scrollbar -mx-4 flex items-center gap-2 overflow-x-auto px-4 pt-1 pb-2 md:mx-0 md:flex-wrap md:px-0"
+              className="flex w-full max-w-full flex-wrap gap-2 pt-1"
               variants={containerVariants}
             >
               {SERVICE_CHIPS.map((chip) => (
                 <motion.li
                   key={chip.label}
                   variants={itemVariants}
-                  className="shrink-0"
                 >
                   <button
                     type="button"
@@ -169,7 +168,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
 
             <motion.div
               variants={itemVariants}
-              className="glass-panel absolute top-4 right-4 flex items-center gap-3 rounded-xl p-3"
+              className="glass-panel absolute top-4 right-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl p-2.5 sm:gap-3 sm:p-3"
             >
               <Star className="size-4 fill-amber-400 text-amber-400" aria-hidden />
               <p className="font-heading text-sm font-medium text-white">
@@ -179,7 +178,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
 
             <motion.div
               variants={itemVariants}
-              className="glass-panel absolute bottom-4 left-4 flex items-center gap-3 rounded-xl p-3"
+              className="glass-panel absolute bottom-4 left-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl p-2.5 sm:gap-3 sm:p-3"
             >
               <ShieldCheck className="size-5 text-[#0066FF]" aria-hidden />
               <p className="font-heading text-sm font-medium text-white">

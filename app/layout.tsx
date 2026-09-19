@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Onest, Unbounded } from "next/font/google";
 
 import { SITE_CONFIG } from "@/lib/constants";
@@ -23,6 +23,12 @@ const onest = Onest({
   variable: "--font-onest",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -118,7 +124,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
           }}
         />
-        <div className="relative z-[1] flex min-h-full flex-col">{children}</div>
+        <div className="relative z-[1] flex min-h-full w-full max-w-full min-w-0 flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );

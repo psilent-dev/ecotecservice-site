@@ -114,7 +114,7 @@ export function Gallery() {
         >
           <motion.h2
             variants={itemVariants}
-            className="font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+            className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
             Процесс работы и результаты
           </motion.h2>

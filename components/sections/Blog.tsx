@@ -30,7 +30,7 @@ export function Blog() {
         >
           <motion.h2
             variants={itemVariants}
-            className="max-w-2xl font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+            className="max-w-2xl font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
             Полезные статьи и советы экспертов
           </motion.h2>

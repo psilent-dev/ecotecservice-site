@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { CheckCircle2, ChevronDown, Loader2, X } from "lucide-react";
+import { CheckCircle2, Loader2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  GlassCalendar,
+  formatBookingDate,
+  parseISODate,
+  toISODate,
+} from "@/components/ui/glass-calendar";
+import { GlassSelect } from "@/components/ui/glass-select";
 import {
   Dialog,
   DialogClose,
@@ -17,8 +24,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput, isCompletePhone } from "@/components/ui/phone-input";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-
 const SERVICES = [
   "Техническое обслуживание (ТО)",
   "Ремонт подвески",
@@ -133,6 +138,8 @@ export function BookingModal({
     setError(null);
     setIsSubmitting(true);
 
+    const bookingDate = parseISODate(form.date);
+
     try {
       const response = await fetch("/api/telegram", {
         method: "POST",
@@ -141,7 +148,7 @@ export function BookingModal({
           name,
           phone,
           service: form.service || undefined,
-          date: form.date || undefined,
+          date: bookingDate ? formatBookingDate(bookingDate) : undefined,
           comment: form.comment.trim() || undefined,
         }),
       });
@@ -180,7 +187,7 @@ export function BookingModal({
           event.preventDefault();
           document.getElementById("booking-name")?.focus();
         }}
-        className="glass-panel z-[60] max-h-[min(90vh,40rem)] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto p-5 text-[#FFFFFF] ring-0 sm:p-6"
+        className="glass-panel z-[60] max-h-[min(90vh,52rem)] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto p-5 text-[#FFFFFF] ring-0 sm:p-6"
       >
         <DialogClose asChild>
           <Button
@@ -261,56 +268,45 @@ export function BookingModal({
                 <Label htmlFor="booking-service" className="text-white">
                   Услуга
                 </Label>
-                <div className="relative">
-                  <select
-                    id="booking-service"
-                    name="service"
-                    disabled={isSubmitting}
-                    value={form.service}
-                    onChange={(event) => {
-                      const service = event.target.value;
-                      setSelectedService?.(service);
-                      setForm((current) => ({
-                        ...current,
-                        service,
-                      }));
-                    }}
-                    className="glass-panel w-full cursor-pointer appearance-none rounded-lg p-3 text-white outline-none focus:border-[#0066FF] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="" disabled>
-                      Выберите услугу
-                    </option>
-                    {SERVICES.map((service) => (
-                      <option key={service} value={service}>
-                        {service}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    aria-hidden
-                    className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-white/60"
-                  />
-                </div>
+                <GlassSelect
+                  id="booking-service"
+                  name="service"
+                  disabled={isSubmitting}
+                  value={form.service}
+                  placeholder="Выберите услугу"
+                  options={SERVICES}
+                  onValueChange={(service) => {
+                    setSelectedService?.(service);
+                    setForm((current) => ({
+                      ...current,
+                      service,
+                    }));
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="booking-date" className="text-white">
+                <Label id="booking-date-label" className="text-white">
                   Желаемая дата
                 </Label>
-                <Input
-                  id="booking-date"
-                  name="date"
-                  type="date"
-                  disabled={isSubmitting}
-                  value={form.date}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      date: event.target.value,
-                    }))
-                  }
-                  className={cn(fieldClassName, "scheme-dark")}
-                />
+                <input type="hidden" name="date" value={form.date} />
+                <div aria-labelledby="booking-date-label">
+                  <GlassCalendar
+                    selectedDate={parseISODate(form.date)}
+                    onSelectDate={(date) =>
+                      setForm((current) => ({
+                        ...current,
+                        date: toISODate(date),
+                      }))
+                    }
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <p className="text-sm text-white/55" aria-live="polite">
+                  {parseISODate(form.date)
+                    ? `Выбрано: ${formatBookingDate(parseISODate(form.date)!)}`
+                    : "Выберите удобную дату для записи"}
+                </p>
               </div>
 
               <div className="flex flex-col gap-2">

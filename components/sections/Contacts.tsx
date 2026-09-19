@@ -26,6 +26,7 @@ const CONTACT_CARDS = [
   {
     title: "Адрес",
     value: SITE_CONFIG.address,
+    href: SITE_CONFIG.mapsUrl,
     icon: MapPin,
   },
   {
@@ -115,7 +116,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
         >
           <motion.h2
             variants={itemVariants}
-            className="font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+            className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
             Контакты
           </motion.h2>
@@ -156,6 +157,9 @@ export function Contacts({ onBookingClick }: ContactsProps) {
                 {"href" in card ? (
                   <a
                     href={card.href}
+                    {...(card.href.startsWith("http")
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
                     className="glass-card flex h-full flex-col rounded-2xl p-6 hover:-translate-y-1"
                   >
                     {content}

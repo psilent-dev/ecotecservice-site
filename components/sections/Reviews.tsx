@@ -4,15 +4,13 @@ import { motion } from "framer-motion";
 import { ExternalLink, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { SITE_CONFIG } from "@/lib/constants";
 import {
   containerVariants,
   inViewViewport,
   itemVariants,
   useMotionReady,
 } from "@/lib/motion";
-
-const YANDEX_REVIEWS_URL =
-  "https://yandex.ru/maps/?text=ECOTEC%20SERVICE";
 
 type ReviewSource = "yandex" | "2gis";
 
@@ -129,13 +127,13 @@ export function Reviews() {
         >
           <motion.h2
             variants={itemVariants}
-            className="font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+            className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
             Что о нас говорят клиенты
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className="glass-panel inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 font-heading text-sm text-white/80"
+            className="glass-panel flex w-full max-w-full items-start gap-2 rounded-2xl px-4 py-2 font-heading text-sm leading-snug text-white/80 sm:w-fit sm:items-center sm:rounded-full"
           >
             <Star className="size-4 fill-amber-400 text-amber-400" aria-hidden />
             4.9 ★ на основе 250+ отзывов в Яндекс Картах и 2ГИС
@@ -178,14 +176,14 @@ export function Reviews() {
           initial="hidden"
           whileInView={motionReady ? "visible" : undefined}
           viewport={inViewViewport}
-          className="flex justify-center"
+          className="flex w-full justify-center"
         >
           <Button
             asChild
-            className="h-12 bg-brand-blue px-6 text-base font-semibold text-white hover:bg-[#0052cc]"
+            className="h-auto min-h-12 w-full max-w-full min-w-0 shrink whitespace-normal px-4 text-base font-semibold text-white hover:bg-[#0052cc] sm:h-12 sm:w-auto sm:whitespace-nowrap sm:px-6"
           >
             <a
-              href={YANDEX_REVIEWS_URL}
+              href={SITE_CONFIG.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

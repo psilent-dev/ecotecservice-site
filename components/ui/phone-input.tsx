@@ -1,6 +1,11 @@
 "use client";
 
-import type { ChangeEvent, ComponentProps, FocusEvent } from "react";
+import type {
+  ChangeEvent,
+  ComponentProps,
+  FocusEvent,
+  KeyboardEvent,
+} from "react";
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -8,23 +13,26 @@ import { cn } from "@/lib/utils";
 const PREFIX = "+7 (";
 const COMPLETE_LENGTH = 18;
 
-export function formatPhoneNumber(inputVal: string) {
+function nationalDigits(inputVal: string) {
   const digits = inputVal.replace(/\D/g, "");
+  const withoutCountry =
+    digits.startsWith("8") || digits.startsWith("7")
+      ? digits.substring(1)
+      : digits;
 
-  let formattedDigits = digits;
-  if (digits.startsWith("8") || digits.startsWith("7")) {
-    formattedDigits = digits.substring(1);
-  }
+  return withoutCountry.substring(0, 10);
+}
 
-  formattedDigits = formattedDigits.substring(0, 10);
+export function formatPhoneNumber(inputVal: string) {
+  const formattedDigits = nationalDigits(inputVal);
 
   let result = PREFIX;
   if (formattedDigits.length > 0) result += formattedDigits.substring(0, 3);
-  if (formattedDigits.length >= 3)
+  if (formattedDigits.length > 3)
     result += `) ${formattedDigits.substring(3, 6)}`;
-  if (formattedDigits.length >= 6)
+  if (formattedDigits.length > 6)
     result += `-${formattedDigits.substring(6, 8)}`;
-  if (formattedDigits.length >= 8)
+  if (formattedDigits.length > 8)
     result += `-${formattedDigits.substring(8, 10)}`;
 
   return result;
@@ -55,6 +63,18 @@ export function PhoneInput({
     onChangeValue(formatPhoneNumber(event.target.value));
   }
 
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key !== "Backspace") return;
+
+    const start = event.currentTarget.selectionStart ?? 0;
+    const end = event.currentTarget.selectionEnd ?? 0;
+    if (start !== end) return;
+    if (start > PREFIX.length) return;
+
+    event.preventDefault();
+    onChangeValue(PREFIX);
+  }
+
   function handleFocus(event: FocusEvent<HTMLInputElement>) {
     if (!value) {
       onChangeValue(PREFIX);
@@ -77,6 +97,7 @@ export function PhoneInput({
       autoComplete="tel"
       value={value}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
       onFocus={handleFocus}
       onBlur={handleBlur}
       placeholder={placeholder}

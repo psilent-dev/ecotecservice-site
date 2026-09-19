@@ -59,16 +59,16 @@ function Logo({
   priority?: boolean;
 }) {
   return (
-    <Link href="/" className={cn("group flex items-center gap-3", className)}>
+    <Link href="/" className={cn("group flex min-w-0 items-center gap-2 sm:gap-3", className)}>
       <Image
         src={SITE_CONFIG.logoPath}
         alt={SITE_CONFIG.name}
         width={40}
         height={40}
-        className="h-8 w-auto object-contain md:h-9"
+        className="h-8 w-auto shrink-0 object-contain md:h-9"
         priority={priority}
       />
-      <span className="font-heading text-base font-bold tracking-wider uppercase sm:text-lg md:text-xl">
+      <span className="font-heading min-w-0 text-sm font-bold tracking-wider uppercase sm:text-base md:text-xl">
         <span className="text-[#0066FF]">{brandFirst}</span>{" "}
         <span className="text-white transition-colors group-hover:text-gray-200">
           {brandSecond}
@@ -127,11 +127,11 @@ export function Header({ onBookingClick }: HeaderProps) {
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: "easeInOut" }}
       className={cn(
-        "glass-panel fixed top-0 z-50 h-16 w-full",
+        "glass-panel fixed top-0 z-50 h-16 w-full max-w-full",
         isScrolled && "shadow-2xl",
       )}
     >
-      <div className="mx-auto grid h-16 w-full max-w-7xl grid-cols-[1fr_auto] items-center gap-4 px-4 lg:grid-cols-[1fr_auto_1fr] lg:px-6">
+      <div className="mx-auto grid h-16 w-full max-w-7xl min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:gap-4 lg:grid-cols-[1fr_auto_1fr] lg:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <Logo priority />
           <LiveStatus className="hidden xl:inline-flex" />

@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <>
       <Header onBookingClick={() => handleOpenBooking()} />
-      <main className="flex flex-1 flex-col">
+      <main className="flex min-w-0 w-full max-w-full flex-1 flex-col overflow-x-clip">
         <Hero
           onBookingClick={() => handleOpenBooking()}
           onSelectService={handleOpenBooking}

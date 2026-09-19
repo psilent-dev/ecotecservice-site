@@ -62,7 +62,7 @@ export function Services({ onBookingClick }: ServicesProps) {
   return (
     <section
       id="services"
-      className="relative isolate scroll-mt-24 px-4 py-16 sm:px-6 lg:py-24"
+      className="relative isolate scroll-mt-24 overflow-x-clip px-4 py-16 sm:px-6 lg:py-24"
     >
       <div
         aria-hidden
@@ -82,7 +82,7 @@ export function Services({ onBookingClick }: ServicesProps) {
         >
           <motion.h2
             variants={itemVariants}
-            className="font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+            className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
             Предоставляемые услуги
           </motion.h2>
@@ -125,7 +125,7 @@ export function Services({ onBookingClick }: ServicesProps) {
                   <Button
                     type="button"
                     onClick={() => onBookingClick?.(service.bookingService)}
-                    className="mt-6 h-11 w-full bg-brand-blue font-semibold text-white hover:bg-[#0052cc] sm:w-auto"
+                    className="mt-6 h-auto min-h-11 w-full max-w-full min-w-0 shrink whitespace-normal bg-brand-blue font-semibold text-white hover:bg-[#0052cc] sm:w-auto"
                   >
                     Узнать цену / Записаться
                   </Button>

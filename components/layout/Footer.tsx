@@ -11,15 +11,15 @@ export function Footer() {
     <footer className="glass-panel relative z-10 pb-16">
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-6">
         <div className="flex flex-col gap-3">
-          <Link href="/" className="group flex items-center gap-3">
+          <Link href="/" className="group flex min-w-0 items-center gap-2 sm:gap-3">
             <Image
               src={SITE_CONFIG.logoPath}
               alt={SITE_CONFIG.name}
               width={40}
               height={40}
-              className="h-9 w-auto object-contain"
+              className="h-9 w-auto shrink-0 object-contain"
             />
-            <span className="font-heading text-lg font-bold tracking-wider uppercase md:text-xl">
+            <span className="font-heading min-w-0 text-base font-bold tracking-wider uppercase sm:text-lg md:text-xl">
               <span className="text-[#0066FF]">{brandFirst}</span>{" "}
               <span className="text-white transition-colors group-hover:text-gray-200">
                 {brandSecond}
