@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock } from "lucide-react";
 
+import { siteData } from "@/content/siteData";
 import { BLOG_ARTICLES } from "@/lib/blog-data";
 import {
   containerVariants,
@@ -32,7 +33,7 @@ export function Blog() {
             variants={itemVariants}
             className="max-w-2xl font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
-            Полезные статьи и советы экспертов
+            {siteData.blog.title}
           </motion.h2>
         </motion.div>
 
@@ -49,7 +50,7 @@ export function Blog() {
                 href={`/blog/${article.slug}`}
                 className="group block h-full"
               >
-                <article className="glass-card flex h-full flex-col overflow-hidden rounded-2xl hover:-translate-y-1">
+                <article className="glass-card flex h-full flex-col overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5">
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
                       src={article.image}
@@ -70,14 +71,17 @@ export function Blog() {
                         {article.readingTime}
                       </span>
                     </p>
-                    <h3 className="font-heading text-lg font-bold text-white">
+                    <h3 className="font-heading text-lg font-bold text-white transition-colors group-hover:text-blue-500">
                       {article.title}
                     </h3>
                     <p className="line-clamp-2 flex-1 text-sm leading-relaxed text-white/65">
                       {article.excerpt}
                     </p>
-                    <span className="mt-1 text-sm font-semibold text-[#0066FF] transition-colors group-hover:text-[#3385ff]">
-                      Читать статью →
+                    <span className="mt-1 inline-flex items-center text-sm font-semibold text-[#0066FF] transition-colors group-hover:text-blue-500">
+                      {siteData.blog.readMore}
+                      <span className="inline-block transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
                     </span>
                   </div>
                 </article>

@@ -2,9 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Phone } from "lucide-react";
 
-import { SITE_CONFIG } from "@/lib/constants";
+import { siteData } from "@/content/siteData";
 
-const [brandFirst, brandSecond] = SITE_CONFIG.name.split(" ");
+const { contact, footer } = siteData;
+const [brandFirst, brandSecond] = contact.name.split(" ");
 
 export function Footer() {
   return (
@@ -13,8 +14,8 @@ export function Footer() {
         <div className="flex flex-col gap-3">
           <Link href="/" className="group flex min-w-0 items-center gap-2 sm:gap-3">
             <Image
-              src={SITE_CONFIG.logoPath}
-              alt={SITE_CONFIG.name}
+              src={contact.logoPath}
+              alt={contact.name}
               width={40}
               height={40}
               className="h-9 w-auto shrink-0 object-contain"
@@ -26,21 +27,21 @@ export function Footer() {
               </span>
             </span>
           </Link>
-          <p className="text-sm text-white/55">{SITE_CONFIG.address}</p>
-          <p className="text-sm text-white/55">{SITE_CONFIG.workingHours}</p>
+          <p className="text-sm text-white/55">{contact.address}</p>
+          <p className="text-sm text-white/55">{contact.workingHours}</p>
         </div>
 
         <a
-          href={`tel:${SITE_CONFIG.rawPhone}`}
+          href={`tel:${contact.rawPhone}`}
           className="inline-flex items-center gap-2 font-heading text-lg font-semibold text-white transition-colors hover:text-brand-blue"
         >
           <Phone className="size-5 text-brand-blue" aria-hidden />
-          {SITE_CONFIG.phone}
+          {contact.phone}
         </a>
       </div>
       <div className="border-t border-white/10">
         <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-white/40 sm:px-6">
-          © 2026 {SITE_CONFIG.name}. Все права защищены.
+          © {footer.year} {contact.name}. {footer.copyright}
         </p>
       </div>
     </footer>

@@ -13,6 +13,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { siteData, type GalleryFilterId } from "@/content/siteData";
 import {
   containerVariants,
   inViewViewport,
@@ -21,83 +22,22 @@ import {
 } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-const FILTERS = [
-  { id: "all", label: "Все" },
-  { id: "workshop", label: "Ремзона" },
-  { id: "before-after", label: "До / После" },
-  { id: "engine", label: "ДВС и Сварка" },
-] as const;
-
-type GalleryCategory = Exclude<(typeof FILTERS)[number]["id"], "all">;
-
-type GalleryItem = {
-  id: string;
-  title: string;
-  category: GalleryCategory;
-  /** Replace with `/gallery/${file}` when local photos are added. */
-  file: string;
-  src: string;
-};
-
-const ITEMS: GalleryItem[] = [
-  {
-    id: "workshop-1",
-    title: "Рабочий пост в ремзоне",
-    category: "workshop",
-    file: "workshop-bay.jpg",
-    src: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: "engine-1",
-    title: "Капитальный ремонт ДВС",
-    category: "engine",
-    file: "engine-overhaul.jpg",
-    src: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: "before-after-1",
-    title: "Восстановление геометрии подвески",
-    category: "before-after",
-    file: "suspension-geometry.jpg",
-    src: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: "engine-2",
-    title: "Сварка выхлопной системы",
-    category: "engine",
-    file: "exhaust-welding.jpg",
-    src: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: "workshop-2",
-    title: "Диагностика на подъёмнике",
-    category: "workshop",
-    file: "lift-diagnostics.jpg",
-    src: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: "before-after-2",
-    title: "Кузовной ремонт: до и после",
-    category: "before-after",
-    file: "body-before-after.jpg",
-    src: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=1200&auto=format&fit=crop",
-  },
-];
+const { gallery } = siteData;
 
 export function Gallery() {
   const motionReady = useMotionReady();
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
+  const [filter, setFilter] = useState<GalleryFilterId>("all");
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const visibleItems = useMemo(
     () =>
       filter === "all"
-        ? ITEMS
-        : ITEMS.filter((item) => item.category === filter),
+        ? gallery.items
+        : gallery.items.filter((item) => item.category === filter),
     [filter],
   );
 
-  const activeItem = ITEMS.find((item) => item.id === activeId) ?? null;
+  const activeItem = gallery.items.find((item) => item.id === activeId) ?? null;
 
   return (
     <section
@@ -116,26 +56,26 @@ export function Gallery() {
             variants={itemVariants}
             className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
-            Процесс работы и результаты
+            {gallery.title}
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className="mt-3 text-base leading-relaxed text-white/70 sm:text-lg"
           >
-            Реальные кадры из нашей ремзоны и примеры выполненных работ
+            {gallery.subtitle}
           </motion.p>
         </motion.div>
 
         <motion.div
           role="tablist"
-          aria-label="Фильтр галереи"
+          aria-label={gallery.filterAriaLabel}
           className="flex flex-wrap gap-2"
           variants={containerVariants}
           initial="hidden"
           whileInView={motionReady ? "visible" : undefined}
           viewport={inViewViewport}
         >
-          {FILTERS.map((item) => {
+          {gallery.filters.map((item) => {
             const isActive = filter === item.id;
 
             return (
@@ -211,7 +151,7 @@ export function Gallery() {
             <>
               <DialogTitle className="sr-only">{activeItem.title}</DialogTitle>
               <DialogDescription className="sr-only">
-                Полноэкранный просмотр фотографии из галереи
+                {gallery.lightboxDescription}
               </DialogDescription>
               <div className="relative aspect-[16/10] w-full bg-black">
                 <Image
@@ -233,7 +173,7 @@ export function Gallery() {
                     variant="ghost"
                     size="icon-sm"
                     className="text-white/70 hover:bg-white/10 hover:text-white"
-                    aria-label="Закрыть"
+                    aria-label={gallery.closeAriaLabel}
                   >
                     <X />
                   </Button>

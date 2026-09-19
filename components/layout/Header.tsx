@@ -16,20 +16,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SITE_CONFIG } from "@/lib/constants";
+import { siteData } from "@/content/siteData";
 import { containerVariants, itemVariants, useMotionReady } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-const [brandFirst, brandSecond] = SITE_CONFIG.name.split(" ");
-
-const NAV_ITEMS = [
-  { href: "#services", label: "Услуги" },
-  { href: "#pricing", label: "Прайс-лист" },
-  { href: "#before-after", label: "До / После" },
-  { href: "#reviews", label: "Отзывы" },
-  { href: "#blog", label: "Блог" },
-  { href: "#contacts", label: "Контакты" },
-] as const;
+const { contact, header } = siteData;
+const [brandFirst, brandSecond] = contact.name.split(" ");
 
 const navLinkClassName =
   "text-sm text-white/80 transition-colors hover:text-white";
@@ -44,9 +36,7 @@ function LiveStatus({ className }: { className?: string }) {
         className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-500"
         aria-hidden
       />
-      <span className="text-xs text-gray-300">
-        Сегодня свободно 2 подъемника
-      </span>
+      <span className="text-xs text-gray-300">{header.liveStatus}</span>
     </p>
   );
 }
@@ -61,8 +51,8 @@ function Logo({
   return (
     <Link href="/" className={cn("group flex min-w-0 items-center gap-2 sm:gap-3", className)}>
       <Image
-        src={SITE_CONFIG.logoPath}
-        alt={SITE_CONFIG.name}
+        src={contact.logoPath}
+        alt={contact.name}
         width={40}
         height={40}
         className="h-8 w-auto shrink-0 object-contain md:h-9"
@@ -138,13 +128,13 @@ export function Header({ onBookingClick }: HeaderProps) {
         </div>
 
         <motion.nav
-          aria-label="Основная навигация"
+          aria-label={header.navAriaLabel}
           className="hidden items-center gap-6 lg:flex"
           variants={containerVariants}
           initial="hidden"
           animate={motionReady ? "visible" : "hidden"}
         >
-          {NAV_ITEMS.map((item) => (
+          {header.nav.map((item) => (
             <motion.a
               key={item.href}
               href={item.href}
@@ -159,11 +149,11 @@ export function Header({ onBookingClick }: HeaderProps) {
         <div className="flex items-center justify-end gap-3">
           <LiveStatus className="hidden md:inline-flex xl:hidden" />
           <a
-            href={`tel:${SITE_CONFIG.rawPhone}`}
+            href={`tel:${contact.rawPhone}`}
             className="hidden items-center gap-2 font-heading text-sm text-white/90 transition-colors hover:text-white md:inline-flex"
           >
             <Phone className="size-4 text-brand-blue" aria-hidden />
-            {SITE_CONFIG.phone}
+            {contact.phone}
           </a>
 
           <Button
@@ -171,7 +161,7 @@ export function Header({ onBookingClick }: HeaderProps) {
             onClick={openBooking}
             className="hidden h-10 bg-brand-blue px-4 font-semibold text-white hover:bg-[#0052cc] lg:inline-flex"
           >
-            Заказать звонок
+            {header.bookingButton}
           </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -181,7 +171,7 @@ export function Header({ onBookingClick }: HeaderProps) {
                 variant="ghost"
                 size="icon"
                 className="text-white hover:bg-white/10 hover:text-white lg:hidden"
-                aria-label="Открыть меню"
+                aria-label={header.menuAriaLabel}
               >
                 <Menu />
               </Button>
@@ -197,15 +187,15 @@ export function Header({ onBookingClick }: HeaderProps) {
                   <Logo />
                 </SheetTitle>
                 <SheetDescription className="text-white/60">
-                  Автосервис / Мультибренд
+                  {header.mobileDescription}
                 </SheetDescription>
               </SheetHeader>
 
               <nav
-                aria-label="Мобильная навигация"
+                aria-label={header.mobileNavAriaLabel}
                 className="flex flex-1 flex-col gap-1 px-4 py-2"
               >
-                {NAV_ITEMS.map((item) => (
+                {header.nav.map((item) => (
                   <SheetClose asChild key={item.href}>
                     <a
                       href={item.href}
@@ -220,18 +210,18 @@ export function Header({ onBookingClick }: HeaderProps) {
               <div className="mt-auto flex flex-col gap-3 border-t border-white/10 p-4">
                 <LiveStatus />
                 <a
-                  href={`tel:${SITE_CONFIG.rawPhone}`}
+                  href={`tel:${contact.rawPhone}`}
                   className="inline-flex items-center gap-2 font-heading text-sm text-white/90"
                 >
                   <Phone className="size-4 text-brand-blue" aria-hidden />
-                  {SITE_CONFIG.phone}
+                  {contact.phone}
                 </a>
                 <Button
                   type="button"
                   onClick={openBooking}
                   className="h-11 w-full bg-brand-blue font-semibold text-white hover:bg-[#0052cc]"
                 >
-                  Заказать звонок
+                  {header.bookingButton}
                 </Button>
               </div>
             </SheetContent>

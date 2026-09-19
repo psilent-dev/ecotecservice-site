@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput, isCompletePhone } from "@/components/ui/phone-input";
-import { SITE_CONFIG } from "@/lib/constants";
+import { siteData } from "@/content/siteData";
 import {
   containerVariants,
   inViewViewport,
@@ -16,25 +16,40 @@ import {
   useMotionReady,
 } from "@/lib/motion";
 
-const CONTACT_CARDS = [
-  {
-    title: "Телефон",
-    value: SITE_CONFIG.phone,
-    href: `tel:${SITE_CONFIG.rawPhone}`,
-    icon: Phone,
-  },
-  {
-    title: "Адрес",
-    value: SITE_CONFIG.address,
-    href: SITE_CONFIG.mapsUrl,
-    icon: MapPin,
-  },
-  {
-    title: "Режим работы",
-    value: SITE_CONFIG.workingHours,
-    icon: Clock,
-  },
-] as const;
+const { contact, contacts } = siteData;
+
+const CONTACT_CARD_ICONS = {
+  phone: Phone,
+  address: MapPin,
+  hours: Clock,
+} as const;
+
+const CONTACT_CARDS = contacts.cards.map((card) => {
+  if (card.kind === "phone") {
+    return {
+      title: card.title,
+      value: contact.phone,
+      href: `tel:${contact.rawPhone}`,
+      icon: CONTACT_CARD_ICONS.phone,
+    };
+  }
+
+  if (card.kind === "address") {
+    return {
+      title: card.title,
+      value: contact.address,
+      href: contact.mapsUrl,
+      icon: CONTACT_CARD_ICONS.address,
+    };
+  }
+
+  return {
+    title: card.title,
+    value: contact.workingHours,
+    href: undefined,
+    icon: CONTACT_CARD_ICONS.hours,
+  };
+});
 
 const fieldClassName =
   "h-11 border-white/15 bg-white/5 text-white placeholder:text-white/40 focus-visible:border-brand-blue focus-visible:ring-brand-blue/30";
@@ -57,7 +72,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
     const trimmedName = name.trim();
 
     if (!trimmedName || !isCompletePhone(phone)) {
-      setError("Укажите имя и телефон в формате +7 (XXX) XXX-XX-XX");
+      setError(contacts.form.validationError);
       return;
     }
 
@@ -71,7 +86,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
         body: JSON.stringify({
           name: trimmedName,
           phone,
-          comment: "Заявка с блока Контакты",
+          comment: contacts.form.telegramComment,
         }),
       });
 
@@ -80,7 +95,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
         | null;
 
       if (!response.ok) {
-        throw new Error(payload?.error || "Не удалось отправить заявку");
+        throw new Error(payload?.error || contacts.form.submitError);
       }
 
       setIsSuccess(true);
@@ -90,7 +105,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "Не удалось отправить заявку",
+          : contacts.form.submitError,
       );
     } finally {
       setIsSubmitting(false);
@@ -118,14 +133,13 @@ export function Contacts({ onBookingClick }: ContactsProps) {
             variants={itemVariants}
             className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
-            Контакты
+            {contacts.title}
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className="mt-3 text-base leading-relaxed text-white/70 sm:text-lg"
           >
-            Приезжайте в ремзону или запишитесь по телефону — скажем, что с
-            авто, до начала работ.
+            {contacts.subtitle}
           </motion.p>
         </motion.div>
 
@@ -154,7 +168,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
 
             return (
               <motion.li key={card.title} variants={itemVariants}>
-                {"href" in card ? (
+                {card.href ? (
                   <a
                     href={card.href}
                     {...(card.href.startsWith("http")
@@ -184,7 +198,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
         >
           <div className="flex flex-col gap-2">
             <Label htmlFor="contacts-name" className="text-white">
-              Имя
+              {contacts.form.nameLabel}
             </Label>
             <Input
               id="contacts-name"
@@ -194,13 +208,13 @@ export function Contacts({ onBookingClick }: ContactsProps) {
               disabled={isSubmitting}
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Иван"
+              placeholder={contacts.form.namePlaceholder}
               className={fieldClassName}
             />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="contacts-phone" className="text-white">
-              Телефон
+              {contacts.form.phoneLabel}
             </Label>
             <PhoneInput
               id="contacts-phone"
@@ -217,7 +231,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
           ) : null}
           {isSuccess ? (
             <p className="text-sm text-emerald-400 sm:col-span-2">
-              Заявка отправлена. Мы перезвоним в течение 10 минут.
+              {contacts.form.success}
             </p>
           ) : null}
           <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row">
@@ -229,10 +243,10 @@ export function Contacts({ onBookingClick }: ContactsProps) {
               {isSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" aria-hidden />
-                  Отправка...
+                  {contacts.form.submitting}
                 </>
               ) : (
-                "Перезвоните мне"
+                contacts.form.submit
               )}
             </Button>
             <Button
@@ -241,7 +255,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
               onClick={() => onBookingClick?.()}
               className="glass-panel h-11 font-semibold text-white hover:bg-white/10 hover:text-white"
             >
-              Записаться на диагностику
+              {contacts.form.secondaryCta}
             </Button>
           </div>
         </motion.form>

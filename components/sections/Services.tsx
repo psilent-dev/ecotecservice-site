@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Car, Cog, Cpu, Flame, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { siteData } from "@/content/siteData";
 import {
   containerVariants,
   inViewViewport,
@@ -11,46 +12,15 @@ import {
   useMotionReady,
 } from "@/lib/motion";
 
-const SERVICES = [
-  {
-    title: "Техническое обслуживание (ТО)",
-    description:
-      "Регламентные работы, замена масла, фильтров и жидкостей с диагностикой по чек-листу.",
-    bookingService: "Техническое обслуживание (ТО)",
-    icon: Wrench,
-    className: "md:col-span-2",
-  },
-  {
-    title: "Ремонт подвески и ходовой",
-    description:
-      "Стойки, рычаги, сайлентблоки и развал-схождение — без лишних замен «на всякий случай».",
-    bookingService: "Ремонт подвески",
-    icon: Car,
-  },
-  {
-    title: "Автоэлектрика и компьютерная диагностика",
-    description:
-      "Ошибки ЭБУ, проводка, датчики и поиск скрытых неисправностей сканером.",
-    bookingService: "Автоэлектрика",
-    icon: Cpu,
-  },
-  {
-    title: "Капитальный и текущий ремонт ДВС",
-    description:
-      "ГБЦ, ГРМ, маслосъём, замена прокладок и восстановление ресурса двигателя.",
-    bookingService: "Ремонт ДВС",
-    icon: Cog,
-    className: "md:col-span-2",
-  },
-  {
-    title: "Сварочные работы и ремонт выхлопных систем",
-    description:
-      "Аргон, кузовной ремонт, банки, гофры и устранение прогаров выхлопа.",
-    bookingService: "Сварочные работы",
-    icon: Flame,
-    className: "md:col-span-2 lg:col-span-2",
-  },
-] as const;
+const { services } = siteData;
+
+const SERVICE_ICONS = {
+  wrench: Wrench,
+  car: Car,
+  cpu: Cpu,
+  cog: Cog,
+  flame: Flame,
+} as const;
 
 type ServicesProps = {
   onBookingClick?: (service?: string) => void;
@@ -84,14 +54,13 @@ export function Services({ onBookingClick }: ServicesProps) {
             variants={itemVariants}
             className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
-            Предоставляемые услуги
+            {services.title}
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className="mt-3 text-base leading-relaxed text-white/70 sm:text-lg"
           >
-            Полный цикл работ: от ТО и диагностики до ремонта ДВС, электрики и
-            сварки — с гарантией на результат.
+            {services.subtitle}
           </motion.p>
         </motion.div>
 
@@ -102,8 +71,8 @@ export function Services({ onBookingClick }: ServicesProps) {
           whileInView={motionReady ? "visible" : undefined}
           viewport={inViewViewport}
         >
-          {SERVICES.map((service) => {
-            const Icon = service.icon;
+          {services.items.map((service) => {
+            const Icon = SERVICE_ICONS[service.icon];
 
             return (
               <motion.div
@@ -127,7 +96,7 @@ export function Services({ onBookingClick }: ServicesProps) {
                     onClick={() => onBookingClick?.(service.bookingService)}
                     className="mt-6 h-auto min-h-11 w-full max-w-full min-w-0 shrink whitespace-normal bg-brand-blue font-semibold text-white hover:bg-[#0052cc] sm:w-auto"
                   >
-                    Узнать цену / Записаться
+                    {services.cta}
                   </Button>
                 </article>
               </motion.div>

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ExternalLink, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { SITE_CONFIG } from "@/lib/constants";
+import { siteData, type ReviewSource } from "@/content/siteData";
 import {
   containerVariants,
   inViewViewport,
@@ -12,67 +12,7 @@ import {
   useMotionReady,
 } from "@/lib/motion";
 
-type ReviewSource = "yandex" | "2gis";
-
-type Review = {
-  id: string;
-  name: string;
-  car: string;
-  text: string;
-  date: string;
-  source: ReviewSource;
-};
-
-const REVIEWS: Review[] = [
-  {
-    id: "alexey-x5",
-    name: "Алексей",
-    car: "BMW X5 (F15)",
-    text: "Приехал на регламентное ТО: масло, фильтры и чек-лист по мотору. Ничего лишнего не навязали, по срокам уложились в день, после замены ошибок по маслу не было.",
-    date: "август 2026",
-    source: "yandex",
-  },
-  {
-    id: "marina-camry",
-    name: "Марина",
-    car: "Toyota Camry",
-    text: "Стучала подвеска на мелких ямах. Заменили стойки и сайлентблоки, сразу сделали развал-схождение. Машина снова едет ровно, без лишних «замен на всякий случай».",
-    date: "июль 2026",
-    source: "2gis",
-  },
-  {
-    id: "dmitry-tiguan",
-    name: "Дмитрий",
-    car: "Volkswagen Tiguan",
-    text: "Горела ошибка ЭБУ, другие сервисы крутили только сброс. Здесь сняли логи сканером, нашли датчик и утечку по проводке. После ремонта Check Engine не возвращался.",
-    date: "июнь 2026",
-    source: "yandex",
-  },
-  {
-    id: "olga-sportage",
-    name: "Ольга",
-    car: "Kia Sportage",
-    text: "Нужно было комплексное ТО перед поездкой. Сделали по регламенту, показали износ колодок без давления «менять всё сразу». Прозрачно по работам и по срокам.",
-    date: "май 2026",
-    source: "2gis",
-  },
-  {
-    id: "ivan-cclass",
-    name: "Иван",
-    car: "Mercedes-Benz C-Class",
-    text: "Уводило руль и ела резину. Диагностика ходовой подтвердила износ рычагов, после замены и сход-развала авто перестало тянуть. Объяснили, что именно ломалось.",
-    date: "апрель 2026",
-    source: "yandex",
-  },
-  {
-    id: "sergey-tucson",
-    name: "Сергей",
-    car: "Hyundai Tucson",
-    text: "Села батарея и плавали обороты. Компьютерная диагностика показала утечку тока и ошибку по генератору, починили за визит. Без «давайте поменяем полмашины».",
-    date: "март 2026",
-    source: "2gis",
-  },
-];
+const { contact, reviews } = siteData;
 
 function YandexMark() {
   return (
@@ -103,7 +43,7 @@ function SourceMeta({ source, date }: { source: ReviewSource; date: string }) {
     <p className="mt-4 flex items-center gap-2 text-xs text-white/45">
       {isYandex ? <YandexMark /> : <TwoGisMark />}
       <span>
-        {date} · {isYandex ? "Яндекс Карты" : "2ГИС"}
+        {date} · {reviews.sourceLabels[source]}
       </span>
     </p>
   );
@@ -129,14 +69,14 @@ export function Reviews() {
             variants={itemVariants}
             className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-4xl"
           >
-            Что о нас говорят клиенты
+            {reviews.title}
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className="glass-panel flex w-full max-w-full items-start gap-2 rounded-2xl px-4 py-2 font-heading text-sm leading-snug text-white/80 sm:w-fit sm:items-center sm:rounded-full"
           >
             <Star className="size-4 fill-amber-400 text-amber-400" aria-hidden />
-            4.9 ★ на основе 250+ отзывов в Яндекс Картах и 2ГИС
+            {reviews.ratingSummary}
           </motion.p>
         </motion.div>
 
@@ -147,13 +87,13 @@ export function Reviews() {
           whileInView={motionReady ? "visible" : undefined}
           viewport={inViewViewport}
         >
-          {REVIEWS.map((review) => (
+          {reviews.items.map((review) => (
             <motion.li key={review.id} variants={itemVariants}>
               <article className="glass-card flex h-full flex-col rounded-2xl p-6">
                 <h3 className="font-heading text-base font-semibold text-white">
                   {review.name} — {review.car}
                 </h3>
-                <p className="mt-2 flex gap-0.5" aria-label="Оценка 5 из 5">
+                <p className="mt-2 flex gap-0.5" aria-label={reviews.ratingAriaLabel}>
                   {Array.from({ length: 5 }, (_, index) => (
                     <Star
                       key={index}
@@ -183,11 +123,11 @@ export function Reviews() {
             className="h-auto min-h-12 w-full max-w-full min-w-0 shrink whitespace-normal px-4 text-base font-semibold text-white hover:bg-[#0052cc] sm:h-12 sm:w-auto sm:whitespace-nowrap sm:px-6"
           >
             <a
-              href={SITE_CONFIG.mapsUrl}
+              href={contact.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Оставить отзыв на Яндекс Картах
+              {reviews.cta}
               <ExternalLink className="size-4" aria-hidden />
             </a>
           </Button>

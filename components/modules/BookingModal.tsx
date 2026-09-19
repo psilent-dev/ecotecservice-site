@@ -24,17 +24,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput, isCompletePhone } from "@/components/ui/phone-input";
 import { Textarea } from "@/components/ui/textarea";
-const SERVICES = [
-  "Техническое обслуживание (ТО)",
-  "Ремонт подвески",
-  "Автоэлектрика",
-  "Ремонт ДВС",
-  "Сварочные работы",
-  "Другое",
-] as const;
+import { BOOKING_SERVICES, siteData } from "@/content/siteData";
 
-const SUCCESS_MESSAGE =
-  "Заявка успешно отправлена! Мы свяжемся с вами в течение 10 минут";
+const { booking } = siteData;
 
 const fieldClassName =
   "h-11 border-white/15 bg-white/5 text-white placeholder:text-white/40 focus-visible:border-brand-blue focus-visible:ring-brand-blue/30";
@@ -131,7 +123,7 @@ export function BookingModal({
     const phone = form.phone.trim();
 
     if (!name || !isCompletePhone(phone)) {
-      setError("Укажите имя и телефон в формате +7 (XXX) XXX-XX-XX");
+      setError(booking.validationError);
       return;
     }
 
@@ -158,7 +150,7 @@ export function BookingModal({
         | null;
 
       if (!response.ok) {
-        throw new Error(payload?.error || "Не удалось отправить заявку");
+        throw new Error(payload?.error || booking.submitError);
       }
 
       setIsSuccess(true);
@@ -169,7 +161,7 @@ export function BookingModal({
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "Не удалось отправить заявку. Попробуйте ещё раз.",
+          : booking.submitError,
       );
     } finally {
       setIsSubmitting(false);
@@ -196,10 +188,10 @@ export function BookingModal({
             size="icon-sm"
             disabled={isSubmitting}
             className="absolute top-2 right-2 text-white/70 hover:bg-white/10 hover:text-white"
-            aria-label="Закрыть"
+            aria-label={booking.closeAriaLabel}
           >
             <X />
-            <span className="sr-only">Закрыть</span>
+            <span className="sr-only">{booking.closeAriaLabel}</span>
           </Button>
         </DialogClose>
 
@@ -207,24 +199,24 @@ export function BookingModal({
           <div className="flex flex-col items-center gap-3 py-8 text-center">
             <CheckCircle2 className="size-12 text-brand-blue" aria-hidden />
             <p className="font-heading text-lg font-semibold text-white">
-              {SUCCESS_MESSAGE}
+              {booking.success}
             </p>
           </div>
         ) : (
           <>
             <DialogHeader className="pr-8">
               <DialogTitle className="font-heading text-xl font-bold text-white sm:text-2xl">
-                Запись на сервис
+                {booking.title}
               </DialogTitle>
               <DialogDescription className="text-sm text-white/70 sm:text-base">
-                Оставьте данные, и мы перезвоним для подтверждения времени
+                {booking.subtitle}
               </DialogDescription>
             </DialogHeader>
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="booking-name" className="text-white">
-                  Имя
+                  {booking.nameLabel}
                 </Label>
                 <Input
                   id="booking-name"
@@ -239,14 +231,14 @@ export function BookingModal({
                       name: event.target.value,
                     }))
                   }
-                  placeholder="Иван"
+                  placeholder={booking.namePlaceholder}
                   className={fieldClassName}
                 />
               </div>
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="booking-phone" className="text-white">
-                  Телефон
+                  {booking.phoneLabel}
                 </Label>
                 <PhoneInput
                   id="booking-phone"
@@ -266,15 +258,15 @@ export function BookingModal({
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="booking-service" className="text-white">
-                  Услуга
+                  {booking.serviceLabel}
                 </Label>
                 <GlassSelect
                   id="booking-service"
                   name="service"
                   disabled={isSubmitting}
                   value={form.service}
-                  placeholder="Выберите услугу"
-                  options={SERVICES}
+                  placeholder={booking.servicePlaceholder}
+                  options={BOOKING_SERVICES}
                   onValueChange={(service) => {
                     setSelectedService?.(service);
                     setForm((current) => ({
@@ -287,7 +279,7 @@ export function BookingModal({
 
               <div className="flex flex-col gap-2">
                 <Label id="booking-date-label" className="text-white">
-                  Желаемая дата
+                  {booking.dateLabel}
                 </Label>
                 <input type="hidden" name="date" value={form.date} />
                 <div aria-labelledby="booking-date-label">
@@ -304,14 +296,14 @@ export function BookingModal({
                 </div>
                 <p className="text-sm text-white/55" aria-live="polite">
                   {parseISODate(form.date)
-                    ? `Выбрано: ${formatBookingDate(parseISODate(form.date)!)}`
-                    : "Выберите удобную дату для записи"}
+                    ? `${booking.dateSelectedPrefix} ${formatBookingDate(parseISODate(form.date)!)}`
+                    : booking.dateHint}
                 </p>
               </div>
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="booking-comment" className="text-white">
-                  Комментарий / Описание проблемы
+                  {booking.commentLabel}
                 </Label>
                 <Textarea
                   id="booking-comment"
@@ -324,7 +316,7 @@ export function BookingModal({
                       comment: event.target.value,
                     }))
                   }
-                  placeholder="Опишите, что случилось с автомобилем"
+                  placeholder={booking.commentPlaceholder}
                   className="min-h-24 border-white/15 bg-white/5 text-white placeholder:text-white/40 focus-visible:border-brand-blue focus-visible:ring-brand-blue/30"
                 />
               </div>
@@ -343,10 +335,10 @@ export function BookingModal({
                 {isSubmitting ? (
                   <>
                     <Loader2 className="animate-spin" />
-                    Отправка...
+                    {booking.submitting}
                   </>
                 ) : (
-                  "Записаться"
+                  booking.submit
                 )}
               </Button>
             </form>
