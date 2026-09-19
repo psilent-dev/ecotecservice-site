@@ -24,6 +24,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput, isCompletePhone } from "@/components/ui/phone-input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  HoneypotField,
+  PersonalDataConsent,
+  honeypotValue,
+} from "@/components/forms/PersonalDataConsent";
 import { BOOKING_SERVICES, siteData } from "@/content/siteData";
 
 const { booking } = siteData;
@@ -122,7 +127,7 @@ export function BookingModal({
     const name = form.name.trim();
     const phone = form.phone.trim();
 
-    if (!name || !isCompletePhone(phone)) {
+    if (name.length < 2 || !isCompletePhone(phone)) {
       setError(booking.validationError);
       return;
     }
@@ -133,7 +138,7 @@ export function BookingModal({
     const bookingDate = parseISODate(form.date);
 
     try {
-      const response = await fetch("/api/telegram", {
+      const response = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -142,6 +147,7 @@ export function BookingModal({
           service: form.service || undefined,
           date: bookingDate ? formatBookingDate(bookingDate) : undefined,
           comment: form.comment.trim() || undefined,
+          confirm_email: honeypotValue(event.currentTarget),
         }),
       });
 
@@ -214,6 +220,7 @@ export function BookingModal({
             </DialogHeader>
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+              <HoneypotField />
               <div className="flex flex-col gap-2">
                 <Label htmlFor="booking-name" className="text-white">
                   {booking.nameLabel}
@@ -223,6 +230,7 @@ export function BookingModal({
                   name="name"
                   autoComplete="name"
                   required
+                  minLength={2}
                   disabled={isSubmitting}
                   value={form.name}
                   onChange={(event) =>
@@ -341,6 +349,7 @@ export function BookingModal({
                   booking.submit
                 )}
               </Button>
+              <PersonalDataConsent />
             </form>
           </>
         )}

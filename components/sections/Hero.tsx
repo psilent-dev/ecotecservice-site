@@ -28,7 +28,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
   const motionReady = useMotionReady();
 
   return (
-    <section className="relative isolate overflow-x-clip pt-28 pb-12 sm:pt-36 lg:pt-40">
+    <section className="relative isolate overflow-x-clip pt-24 pb-8 sm:pt-36 sm:pb-12 lg:pt-40">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 bg-grid [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]"
@@ -47,22 +47,22 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
       />
 
       <motion.div
-        className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 sm:px-6"
+        className="relative z-10 mx-auto flex w-full max-w-7xl flex-col space-y-4 px-4 sm:space-y-6 sm:px-6"
         variants={containerVariants}
         initial="hidden"
         animate={motionReady ? "visible" : "hidden"}
       >
         <motion.div
-          className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12"
+          className="grid grid-cols-1 items-center gap-4 sm:gap-6 lg:grid-cols-12 lg:gap-12"
           variants={containerVariants}
         >
           <motion.div
-            className="flex flex-col gap-4 lg:col-span-7 lg:gap-6"
+            className="flex flex-col space-y-4 sm:space-y-6 lg:col-span-7"
             variants={containerVariants}
           >
             <motion.h1
               variants={itemVariants}
-              className="font-heading text-2xl font-bold leading-snug text-white sm:text-4xl lg:text-5xl"
+              className="font-heading text-2xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl"
             >
               {hero.titleBefore}{" "}
               <span className="max-w-full">{hero.titleCity}</span> —{" "}
@@ -71,40 +71,52 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
 
             <motion.p
               variants={itemVariants}
-              className="mt-4 max-w-2xl text-lg text-gray-300"
+              className="mt-2 max-w-2xl text-sm text-gray-300 opacity-80 sm:mt-4 sm:text-base"
             >
               {hero.subtitle}
             </motion.p>
 
-            <motion.ul
-              className="flex w-full max-w-full flex-wrap gap-2 pt-1"
-              variants={containerVariants}
-            >
-              {hero.chips.map((chip) => (
-                <motion.li
-                  key={chip.label}
-                  variants={itemVariants}
-                >
-                  <button
-                    type="button"
-                    onClick={() => onSelectService?.(chip.service)}
-                    className="glass-card flex-shrink-0 cursor-pointer whitespace-nowrap rounded-full px-3 py-1.5 text-xs text-gray-300 hover:text-white"
+            <div className="marquee-fade -mx-4 overflow-hidden sm:mx-0 sm:overflow-visible">
+              <ul className="animate-marquee items-center gap-2 py-1">
+                {hero.chips.map((chip) => (
+                  <li key={chip.label} className="shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => onSelectService?.(chip.service)}
+                      className="glass-card cursor-pointer whitespace-nowrap rounded-full px-3 py-1.5 text-xs text-gray-300 hover:text-white sm:text-sm"
+                    >
+                      {chip.label}
+                    </button>
+                  </li>
+                ))}
+                {hero.chips.map((chip) => (
+                  <li
+                    key={`marquee-${chip.label}`}
+                    className="marquee-only shrink-0"
+                    aria-hidden
                   >
-                    {chip.label}
-                  </button>
-                </motion.li>
-              ))}
-            </motion.ul>
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => onSelectService?.(chip.service)}
+                      className="glass-card cursor-pointer whitespace-nowrap rounded-full px-3 py-1.5 text-xs text-gray-300 hover:text-white"
+                    >
+                      {chip.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <motion.div
               variants={itemVariants}
-              className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:items-center"
+              className="flex flex-col gap-2.5 sm:flex-row sm:items-center"
             >
               <motion.div whileHover={{ scale: 1.02 }} className="w-full sm:w-auto">
                 <Button
                   type="button"
                   onClick={onBookingClick}
-                  className="h-12 w-full bg-brand-blue px-6 text-base font-semibold text-white shadow-[0_0_25px_rgba(0,102,255,0.4)] transition-all hover:bg-[#0052cc] hover:shadow-[0_0_35px_rgba(0,102,255,0.6)] sm:w-auto"
+                  className="h-auto w-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(0,102,255,0.4)] transition-all hover:bg-[#0052cc] hover:shadow-[0_0_35px_rgba(0,102,255,0.6)] sm:w-auto sm:py-4 sm:text-base"
                 >
                   {hero.primaryCta}
                 </Button>
@@ -113,7 +125,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-12 w-full border-white/20 bg-transparent px-6 text-base font-semibold text-white hover:bg-white/10 hover:text-white sm:w-auto"
+                  className="h-auto w-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 hover:text-white sm:w-auto sm:py-4 sm:text-base"
                   onClick={() => {
                     document
                       .getElementById("pricing")
@@ -131,7 +143,7 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
             variants={containerVariants}
           >
             <motion.div variants={itemVariants} className="relative">
-              <div className="glass-panel relative h-[200px] w-full overflow-hidden rounded-2xl sm:h-[350px]">
+              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10">
                 <Image
                   src={hero.image}
                   alt={hero.imageAlt}
@@ -142,27 +154,21 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#212126] via-[#212126]/40 to-transparent" />
+
+                <div className="absolute top-3 right-3 flex max-w-[calc(100%-1.5rem)] items-center gap-1.5 rounded-xl border border-white/15 bg-slate-900/70 px-3 py-1.5 text-xs backdrop-blur-md sm:gap-2 sm:text-sm">
+                  <Star className="size-3.5 shrink-0 fill-amber-400 text-amber-400 sm:size-4" aria-hidden />
+                  <p className="font-heading font-medium text-white">
+                    {hero.ratingBadge}
+                  </p>
+                </div>
+
+                <div className="absolute bottom-3 left-3 flex max-w-[calc(100%-1.5rem)] items-center gap-1.5 rounded-xl border border-white/15 bg-slate-900/70 px-3 py-1.5 text-xs backdrop-blur-md sm:gap-2 sm:text-sm">
+                  <ShieldCheck className="size-3.5 shrink-0 text-[#0066FF] sm:size-5" aria-hidden />
+                  <p className="font-heading font-medium text-white">
+                    {hero.guaranteeBadge}
+                  </p>
+                </div>
               </div>
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              className="glass-panel absolute top-4 right-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl p-2.5 sm:gap-3 sm:p-3"
-            >
-              <Star className="size-4 fill-amber-400 text-amber-400" aria-hidden />
-              <p className="font-heading text-sm font-medium text-white">
-                {hero.ratingBadge}
-              </p>
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              className="glass-panel absolute bottom-4 left-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl p-2.5 sm:gap-3 sm:p-3"
-            >
-              <ShieldCheck className="size-5 text-[#0066FF]" aria-hidden />
-              <p className="font-heading text-sm font-medium text-white">
-                {hero.guaranteeBadge}
-              </p>
             </motion.div>
           </motion.div>
         </motion.div>

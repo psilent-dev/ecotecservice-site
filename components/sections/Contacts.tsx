@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput, isCompletePhone } from "@/components/ui/phone-input";
+import { HoneypotField, honeypotValue } from "@/components/forms/PersonalDataConsent";
 import { siteData } from "@/content/siteData";
 import {
   containerVariants,
@@ -71,7 +72,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
 
     const trimmedName = name.trim();
 
-    if (!trimmedName || !isCompletePhone(phone)) {
+    if (trimmedName.length < 2 || !isCompletePhone(phone)) {
       setError(contacts.form.validationError);
       return;
     }
@@ -80,13 +81,14 @@ export function Contacts({ onBookingClick }: ContactsProps) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/telegram", {
+      const response = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: trimmedName,
           phone,
           comment: contacts.form.telegramComment,
+          confirm_email: honeypotValue(event.currentTarget),
         }),
       });
 
@@ -196,6 +198,7 @@ export function Contacts({ onBookingClick }: ContactsProps) {
           viewport={inViewViewport}
           className="glass-panel relative z-10 grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
         >
+          <HoneypotField />
           <div className="flex flex-col gap-2">
             <Label htmlFor="contacts-name" className="text-white">
               {contacts.form.nameLabel}
