@@ -38,28 +38,33 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   keywords: [
-    "автосервис",
-    "ремонт авто",
+    "автосервис Ростов-на-Дону",
+    "ремонт авто Ростов-на-Дону",
+    "ЭКОТЕК СЕРВИС",
     "ТО",
-    "диагностика",
-    "подвеска",
-    "ДВС",
-    "сварка",
+    "диагностика авто",
+    "ремонт подвески",
+    "ремонт ДВС",
+    "автоэлектрика",
+    "сварочные работы",
   ],
   applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "ru_RU",
-    url: SITE_URL,
+    url: "/",
     siteName: SITE_NAME,
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: OG_IMAGE,
+        url: "/gallery/hero.jpg",
         width: 1200,
         height: 630,
         alt: `${SITE_NAME} — автосервис в Ростове-на-Дону`,
@@ -70,7 +75,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: [OG_IMAGE],
+    images: ["/gallery/hero.jpg"],
   },
   robots: {
     index: true,
@@ -79,21 +84,32 @@ export const metadata: Metadata = {
 };
 
 const [cityPart, ...streetParts] = SITE_CONFIG.address.split(", ");
+const addressLocality = cityPart.replace(/^г\.\s*/, "");
+const streetAddress = streetParts.join(", ") || SITE_CONFIG.address;
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "AutoRepair",
   name: SITE_CONFIG.name,
+  description: SITE_DESCRIPTION,
   image: OG_IMAGE,
   url: SITE_URL,
   telephone: SITE_CONFIG.rawPhone,
   priceRange: "₽₽",
   address: {
     "@type": "PostalAddress",
-    streetAddress: streetParts.join(", ") || SITE_CONFIG.address,
-    addressLocality: cityPart.replace(/^г\.\s*/, ""),
+    streetAddress,
+    addressLocality,
+    addressRegion: "Ростовская область",
     addressCountry: "RU",
   },
+  areaServed: {
+    "@type": "City",
+    name: addressLocality,
+  },
+  hasMap: SITE_CONFIG.mapsUrl,
+  sameAs: [SITE_CONFIG.mapsUrl],
+  openingHours: "Mo-Sa 09:00-18:00",
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: [
@@ -103,10 +119,9 @@ const jsonLd = {
       "Thursday",
       "Friday",
       "Saturday",
-      "Sunday",
     ],
     opens: "09:00",
-    closes: "21:00",
+    closes: "18:00",
   },
 };
 
