@@ -62,11 +62,18 @@ export function Hero({ onBookingClick, onSelectService }: HeroProps) {
           >
             <motion.h1
               variants={itemVariants}
-              className="font-heading text-2xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl"
+              className="font-heading text-[min(1.5rem,calc((100vw-2rem)/20))] font-bold leading-tight text-white sm:text-4xl lg:text-5xl"
             >
-              {hero.titleBefore}{" "}
-              <span className="max-w-full">{hero.titleCity}</span> —{" "}
-              <span className={accentClassName}>{hero.titleAccent}</span>
+              <span className="whitespace-nowrap sm:whitespace-normal">
+                {hero.titleBefore} {hero.titleCity}
+              </span>
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              <span
+                className={`${accentClassName} whitespace-nowrap sm:whitespace-normal`}
+              >
+                {hero.titleAccent}
+              </span>
             </motion.h1>
 
             <motion.p
