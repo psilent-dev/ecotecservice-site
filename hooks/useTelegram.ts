@@ -25,6 +25,7 @@ export type HapticType =
 type TelegramWebApp = {
   ready: () => void;
   expand: () => void;
+  close?: () => void;
   initDataUnsafe?: {
     user?: TelegramUser;
   };
@@ -49,6 +50,10 @@ function getWebApp() {
   }
 
   return window.Telegram?.WebApp;
+}
+
+export function readTelegramUser(): TelegramUser | null {
+  return getWebApp()?.initDataUnsafe?.user ?? null;
 }
 
 export function useTelegram() {
@@ -109,5 +114,13 @@ export function useTelegram() {
     }
   }, []);
 
-  return { user, hapticFeedback };
+  const closeWebApp = useCallback(() => {
+    try {
+      getWebApp()?.close?.();
+    } catch {
+      // Вне Telegram метода close нет.
+    }
+  }, []);
+
+  return { user, hapticFeedback, closeWebApp };
 }

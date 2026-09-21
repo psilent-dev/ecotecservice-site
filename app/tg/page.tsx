@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { PhoneInput, isCompletePhone } from "@/components/ui/phone-input";
 import { Textarea } from "@/components/ui/textarea";
 import { siteData } from "@/content/siteData";
-import { useTelegram } from "@/hooks/useTelegram";
+import { readTelegramUser, useTelegram } from "@/hooks/useTelegram";
 
 const { contact, hero, booking } = siteData;
 
@@ -56,7 +56,10 @@ export default function TelegramMiniAppPage() {
     setError(null);
     setIsSubmitting(true);
 
-    const telegramHandle = user?.username ? `@${user.username}` : "";
+    const telegramUser = readTelegramUser() ?? user;
+    const telegramHandle = telegramUser?.username
+      ? `@${telegramUser.username}`
+      : "";
     const comment = [
       car.trim() ? `Авто: ${car.trim()}` : "",
       problem.trim() ? `Поломка: ${problem.trim()}` : "",
@@ -72,27 +75,35 @@ export default function TelegramMiniAppPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: trimmedName,
+          userName: telegramDisplayName(
+            telegramUser?.first_name,
+            telegramUser?.last_name,
+          ) || trimmedName,
           phone: trimmedPhone,
+          car: car.trim() || undefined,
           comment,
+          chatId: telegramUser?.id,
+          username: telegramUser?.username,
           confirm_email: honeypotValue(event.currentTarget),
         }),
       });
 
       const payload = (await response.json().catch(() => null)) as
-        | { error?: string }
+        | { error?: string; success?: boolean; orderId?: string }
         | null;
 
-      if (!response.ok) {
+      if (!response.ok || !payload?.success) {
         throw new Error(payload?.error || booking.submitError);
       }
 
+      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred("success");
+      window.Telegram?.WebApp?.close?.();
       setIsSuccess(true);
-      hapticFeedback("success");
     } catch (submitError) {
       setError(
         submitError instanceof Error ? submitError.message : booking.submitError,
       );
-      hapticFeedback("error");
+      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred("error");
     } finally {
       setIsSubmitting(false);
     }
