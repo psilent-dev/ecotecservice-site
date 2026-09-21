@@ -57,17 +57,6 @@ export default function TelegramMiniAppPage() {
     setIsSubmitting(true);
 
     const telegramUser = readTelegramUser() ?? user;
-    const telegramHandle = telegramUser?.username
-      ? `@${telegramUser.username}`
-      : "";
-    const comment = [
-      car.trim() ? `Авто: ${car.trim()}` : "",
-      problem.trim() ? `Поломка: ${problem.trim()}` : "",
-      telegramHandle ? `Telegram: ${telegramHandle}` : "",
-      "Источник: Telegram Mini App",
-    ]
-      .filter(Boolean)
-      .join("\n");
 
     try {
       const response = await fetch("/api/booking", {
@@ -81,7 +70,7 @@ export default function TelegramMiniAppPage() {
           ) || trimmedName,
           phone: trimmedPhone,
           car: car.trim() || undefined,
-          comment,
+          comment: problem.trim() || undefined,
           chatId: telegramUser?.id,
           username: telegramUser?.username,
           confirm_email: honeypotValue(event.currentTarget),

@@ -115,12 +115,9 @@ function adminTicketText(input: {
     `👤 <b>Клиент:</b> ${escapeHtml(input.name)}`,
     `💬 <b>Telegram:</b> ${escapeHtml(telegram)}`,
     `🚙 <b>Автомобиль:</b> ${fallback(input.car, "Не указан")}`,
-    `🔧 <b>Услуга:</b> ${fallback(input.service, "Не указана")}`,
-    `📅 <b>Желаемое время:</b> ${fallback(input.date, "Не указано")}`,
     `📲 <b>Контактный номер:</b> ${escapeHtml(input.phone)}`,
-    `📝 <b>Комментарий:</b> ${fallback(input.comment, "Нет")}`,
+    `📝 <b>Комментарий:</b> ${fallback(input.comment, "—")}`,
     "",
-    "📍 <i>Ростов-на-Дону, Экотек Сервис</i>",
   ].join("\n");
 }
 
